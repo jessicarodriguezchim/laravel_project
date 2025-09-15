@@ -1,5 +1,6 @@
 {
     "require": {
-        "laravel/jetstream": "^5.3"
+        "laravel/jetstream": "^5.3",
+        "laravel-lang/common": "^6.7"
     }
 }
