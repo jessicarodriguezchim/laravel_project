@@ -1,10 +1,11 @@
-<?php
-
+<?php //decir que es un archivo php
+//es una importacion de la clase Route del framework Laravel- Route configuara las rutas de la aplicacion
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/admin');
+//Route::get('/', function () {
+  //  return view('welcome');
+//});
 
 Route::middleware([
     'auth:sanctum',
@@ -15,3 +16,4 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
