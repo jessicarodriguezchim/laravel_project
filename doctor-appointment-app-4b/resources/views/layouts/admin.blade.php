@@ -17,7 +17,7 @@
         <!-- Styles -->
         @livewireStyles
     </head>
-    <body class="font-sans antialiased" bgcolor="#f8f9fa">
+    <body class="font-sans antialiased pg-gray-50">
 
         @stack('modals')
  //rutas
@@ -32,5 +32,6 @@
 </div>
 
         @livewireScripts
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     </body>
 </html>
