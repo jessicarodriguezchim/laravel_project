@@ -12,6 +12,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
+        //Inclusión de FontAwesome: permite usar íconos profesionales en toda la interfaz.
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://kit.fontawesome.com/84edefe970.js" crossorigin="anonymous"></script>
         <!-- Styles -->
@@ -20,12 +21,13 @@
     <body class="font-sans antialiased pg-gray-50">
 
         @stack('modals')
- //rutas
+ //rutas - Inclusión de la navegación superior y sidebar
         @include('layouts.includes.admin.navigation')
         @include('layouts.includes.admin.sidebar')
 
 <div class="p-4 sm:ml-64">
     <!--Margin top 14px-->
+    //Configuración del margen izquierdo responsive
     <div class="mt-14">
         {{ $slot }} <!--dentro de este slot va a ir el contenido de la pagina que use este layout-->
         </div>
