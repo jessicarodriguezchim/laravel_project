@@ -1,6 +1,7 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import flowbite from 'flowbite/plugin';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -9,6 +10,9 @@ export default {
         './vendor/laravel/jetstream/**/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+
+        // 👇 Agrega esta línea para que Flowbite funcione
+        './node_modules/flowbite/**/*.js',
     ],
 
     theme: {
@@ -19,5 +23,6 @@ export default {
         },
     },
 
-    plugins: [forms, typography],
+    // 👇 Agrega Flowbite a los plugins
+    plugins: [forms, typography, flowbite],
 };

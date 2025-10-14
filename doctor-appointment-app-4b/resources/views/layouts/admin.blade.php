@@ -14,7 +14,10 @@
         <!-- Scripts -->
         //Inclusión de FontAwesome: permite usar íconos profesionales en toda la interfaz.
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://kit.fontawesome.com/84edefe970.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/84edefe970.js" crossorigin="anonymous">
+        </script>
+
+        <wireui:scripts />
         <!-- Styles -->
         @livewireStyles
     </head>
