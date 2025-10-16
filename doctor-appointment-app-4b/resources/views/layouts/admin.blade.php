@@ -1,3 +1,5 @@
+@props(['breadcrumbs' => []])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -30,10 +32,11 @@
 
 <div class="p-4 sm:ml-64">
     <!--Margin top 14px-->
-    //Configuración del margen izquierdo responsive
-    <div class="mt-14">
-        {{ $slot }} <!--dentro de este slot va a ir el contenido de la pagina que use este layout-->
+    {{--Configuración del margen izquierdo responsive--}}
+    <div class="mt-14 flex items-center justify-between w-full">
+        @include('layouts.includes.admin.breadcrum')
         </div>
+        {{ $slot }} <!--slot: espacio donde se pone algo; dentro de este slot va a ir el contenido de la pagina que use este layout-->
 </div>
 
         @livewireScripts
