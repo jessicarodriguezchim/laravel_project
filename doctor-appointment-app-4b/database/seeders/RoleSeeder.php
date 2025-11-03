@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -20,12 +21,11 @@ class RoleSeeder extends Seeder
             'Recepcionista',
             'Administrador'
         ];
-        //Crear en la BD
-        foreach ($roles as $role){
+        //Crear en la BD los roles
+        foreach($roles as $role){
             Role::create([
-                'name'=>$role
-            ]
-            );
+                'name' => $role
+            ]);
         }
         //
     }

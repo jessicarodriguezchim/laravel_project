@@ -1,5 +1,5 @@
 @props([
-    'title' => config('app.name', 'Laravel')
+    'title' => config('app.name', 'Laravel'),
     'breadcrumbs' => []])
 
 <!DOCTYPE html>
