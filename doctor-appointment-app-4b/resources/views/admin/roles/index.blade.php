@@ -2,12 +2,18 @@
     title="Roles | MediConnect"
     :breadcrumbs="[
         ['name' => 'Dashboard',
-        'route' => route('admin.dashboard')
+        'href' => route('admin.dashboard')
         ],
         ['name' => 'Roles',
-
-],
+        'href' => route('admin.roles.index')
+        ],
     ]">
-     @livewire('admin.datatables.role-table')
+    <div class="mb-4">
+        <x-wire-button blue href="{{route('admin.roles.create')}}" >
+           <i class="fa-solid fa-plus"></i>
+           Nuevo
+        </x-wire-button>
+    </div>
+    @livewire('admin.datatables.role-table')
 
 </x-admin-layout>

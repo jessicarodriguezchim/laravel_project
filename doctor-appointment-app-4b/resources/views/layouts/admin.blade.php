@@ -25,7 +25,7 @@
         <!-- Styles -->
         @livewireStyles
     </head>
-    <body class="font-sans antialiased pg-gray-50">
+    <body class="font-sans antialiased bg-gray-50">
 
         @stack('modals')
  //rutas - Inclusión de la navegación superior y sidebar
