@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Role;
 
 class RoleController extends Controller
 {
@@ -13,6 +14,7 @@ class RoleController extends Controller
     public function index()
     {
        return view('admin.roles.index'); //
+
     }
 
     /**
@@ -29,7 +31,29 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validar que se cree bien
+        $request->validate([
+            'name' => 'required|unique:roles,name,NULL,id,guard_name,web'
+        ]);
+
+        //Si pasa la validación, creará el rol
+        Role::create([
+            'name' => $request->name,
+            'guard_name' => 'web', // Valor por defecto para guard_name
+        ]);
+
+        //variale de un solo uso para alerta de SweetAlert2
+        session()->flash('swal',
+        [
+            'icon' => 'success',
+            'title' => 'Rol creado correctamente',
+            'text' => 'El rol ha sido creado correctamente',
+        ]);
+
+        //Redireccionará a la tabla principal
+        return redirect()->route('admin.roles.index')
+        ->with('success', 'Rol created succesfully');
+
     }
 
     /**
@@ -62,6 +86,21 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // Buscar el rol
+        $role = Role::findOrFail($id);
+        
+        // Eliminar el rol
+        $role->delete();
+
+        // Variable de un solo uso para alerta de SweetAlert2
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Rol eliminado correctamente',
+            'text' => 'El rol ha sido eliminado correctamente',
+        ]);
+
+        // Redireccionar a la tabla principal
+        return redirect()->route('admin.roles.index')
+            ->with('success', 'Rol eliminado correctamente');
     }
 }

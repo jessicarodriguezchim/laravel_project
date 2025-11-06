@@ -1,11 +1,9 @@
+/* Flowbite */
+@import "flowbite/src/themes/default";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Flowbite */
-@import "flowbite/src/themes/default";
-@plugin "flowbite/plugin";
-@source "../../node_modules/flowbite";
 
 [x-cloak] {
     display: none;

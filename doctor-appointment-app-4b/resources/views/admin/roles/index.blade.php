@@ -8,7 +8,7 @@
         'href' => route('admin.roles.index')
         ],
     ]">
-    <div class="mb-4">
+    <div class="mb-4 flex justify-end">
         <x-wire-button blue href="{{route('admin.roles.create')}}" >
            <i class="fa-solid fa-plus"></i>
            Nuevo
