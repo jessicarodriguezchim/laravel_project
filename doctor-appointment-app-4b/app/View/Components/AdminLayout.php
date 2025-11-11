@@ -11,8 +11,11 @@ class AdminLayout extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
-    {
+    public function __construct(
+        public $breadcrumbs = [],
+        public $title = null,
+        public $actions = null
+    ) {
         //
     }
 
