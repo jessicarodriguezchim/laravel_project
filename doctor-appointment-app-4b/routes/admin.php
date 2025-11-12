@@ -1,11 +1,13 @@
-<?php //decir que es un archivo php
-//es una importacion de la clase Route del framework Laravel- Route configuara las rutas de la aplicacion
+<?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::get('/', function () {
     return view('admin.dashboard');
 })->name('dashboard');
 
-//gestion de roles
-Route::resource('roles', RoleController::class);
+// Gestión de roles
+Route::resource('roles', RoleController::class)->names('roles');
+Route::resource('users', UserController::class)->names('users');
