@@ -40,3 +40,4 @@ class RoleTable extends DataTableComponent
         ];
     }
 }
+

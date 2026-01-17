@@ -1,9 +1,6 @@
 @props([
     'label' => null,
     'name' => null,
-    'type' => 'text',
-    'value' => null,
-    'placeholder' => null,
     'required' => false,
     'disabled' => false,
 ])
@@ -13,20 +10,18 @@
         <x-label for="{{ $name }}" value="{{ $label }}" />
     @endif
     
-    <input 
+    <select 
         id="{{ $name }}" 
         name="{{ $name }}" 
-        type="{{ $type }}" 
         class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-        placeholder="{{ $placeholder }}"
-        value="{{ $value ?? '' }}"
-        @if($disabled) disabled @endif
-        @if($required) required @endif
-        {{ $attributes->except(['label', 'name', 'type', 'value', 'placeholder', 'required', 'disabled']) }}
-    />
+        {{ $required ? 'required' : '' }}
+        {{ $disabled ? 'disabled' : '' }}
+        {{ $attributes->except(['label', 'name', 'required', 'disabled']) }}
+    >
+        {{ $slot }}
+    </select>
     
     @error($name)
         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
     @enderror
 </div>
-

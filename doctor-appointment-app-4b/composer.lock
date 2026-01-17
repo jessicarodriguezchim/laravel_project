@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c2cd86dd1eb886649b7e9d1c2efe6a77",
+    "content-hash": "25db81791b59741ceb019a310367deb2",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2461,16 +2461,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.6.4",
+            "version": "v3.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "ef04be759da41b14d2d129e670533180a44987dc"
+                "reference": "5a8dffd4c0ab357ff7ed5b39e7c2453d962a68e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/ef04be759da41b14d2d129e670533180a44987dc",
-                "reference": "ef04be759da41b14d2d129e670533180a44987dc",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/5a8dffd4c0ab357ff7ed5b39e7c2453d962a68e0",
+                "reference": "5a8dffd4c0ab357ff7ed5b39e7c2453d962a68e0",
                 "shasum": ""
             },
             "require": {
@@ -2525,7 +2525,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.6.4"
+                "source": "https://github.com/livewire/livewire/tree/v3.7.4"
             },
             "funding": [
                 {
@@ -2533,7 +2533,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-17T05:12:15+00:00"
+            "time": "2026-01-13T09:37:21+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -7013,21 +7013,21 @@
         },
         {
             "name": "wireui/wireui",
-            "version": "v2.4.3",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wireui/wireui.git",
-                "reference": "29f6b969f7c9c057379486fd6370915eaec5e32f"
+                "reference": "e4d966689eb840986281f5237149b2480eacf87c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wireui/wireui/zipball/29f6b969f7c9c057379486fd6370915eaec5e32f",
-                "reference": "29f6b969f7c9c057379486fd6370915eaec5e32f",
+                "url": "https://api.github.com/repos/wireui/wireui/zipball/e4d966689eb840986281f5237149b2480eacf87c",
+                "reference": "e4d966689eb840986281f5237149b2480eacf87c",
                 "shasum": ""
             },
             "require": {
                 "laravel/framework": "^10.0|^11.0|^12.0",
-                "php": "^8.2|^8.3|^8.4",
+                "php": "^8.2|^8.3|^8.4|^8.5",
                 "wireui/heroicons": "^2.8"
             },
             "require-dev": {
@@ -7035,9 +7035,9 @@
                 "livewire/livewire": "^3.6",
                 "orchestra/testbench": "^10.0",
                 "orchestra/testbench-dusk": "^10.0",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
-                "pestphp/pest-plugin-livewire": "^3.0"
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.0",
+                "pestphp/pest-plugin-livewire": "^4.0"
             },
             "type": "library",
             "extra": {
@@ -7073,9 +7073,9 @@
             ],
             "support": {
                 "issues": "https://github.com/wireui/wireui/issues",
-                "source": "https://github.com/wireui/wireui/tree/v2.4.3"
+                "source": "https://github.com/wireui/wireui/tree/v2.5.1"
             },
-            "time": "2025-04-29T22:34:44+00:00"
+            "time": "2025-11-10T04:46:35+00:00"
         }
     ],
     "packages-dev": [

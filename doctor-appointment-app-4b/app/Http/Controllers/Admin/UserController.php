@@ -3,73 +3,123 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /** Listado de usuarios */
+    /**
+     * Muestra la lista de usuarios.
+     */
     public function index()
     {
-        $users = User::latest()->paginate(10);
-
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index');
     }
 
-    /** Formulario de creación */
+    /**
+     * Muestra el formulario para crear un nuevo usuario.
+     */
     public function create()
     {
-        return view('admin.users.create');
+        $roles= Role::all();
+        return view('admin.users.create', compact('roles'));
     }
 
-    /** Guardar nuevo usuario */
+    /**
+     * Guarda un nuevo usuario (temporalmente vacío).
+     */
     public function store(Request $request)
     {
-        // Valida igual que hagas con Roles, pero adaptado a User
         $data = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            // agrega lo que uses (password, role_id, etc.)
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'id_number' => 'required|string|min:5|max:20|regex:/^[A-Za-z0-9\-]+$/|unique:users',
+            'phone' => 'required|digits_between:7,15',
+            'address' => 'required|string|min:3|max:255',
+            'role_id'=>'required|exists:roles,id',
         ]);
 
-        // Ojo con password si lo usas:
-        // $data['password'] = bcrypt($data['password']);
+        $user = User::create($data);
 
-        User::create($data);
+        // Asignar rol usando Spatie Permission
+        $role = Role::findOrFail($data['role_id']);
+        $user->assignRole($role);
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'Usuario creado correctamente.');
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Usuario creado',
+            'text' => 'El usuario ha sido creado exitosamente.',
+            ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Usuario creado exitosamente.');
+
+
     }
 
-    /** Formulario de edición */
+    /**
+     * Muestra el formulario para editar un usuario existente.
+     */
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        $roles= Role::all();
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
-    /** Actualizar usuario */
+    /**
+     * Actualiza un usuario existente (temporalmente vacío).
+     */
     public function update(Request $request, User $user)
     {
-        $data = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+         $data = $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|string|email|unique:users,email,'. $user->id,
+            'id_number' => 'required|string|min:5|max:20|regex:/^[A-Za-z0-9\-]+$/|unique:users,id_number,'. $user->id,
+            'phone' => 'required|digits_between:7,15',
+            'address' => 'required|string|min:3|max:255',
+            'role_id'=>'required|exists:roles,id',
         ]);
 
         $user->update($data);
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'Usuario actualizado correctamente.');
-    }
+        // Si el usuario quiere editar su contraseña que lo guarde
+        if($request->filled('password')) {
+            $user->password = $request->password; // El modelo tiene cast 'hashed', se hasheará automáticamente
+            $user->save();
+        }
 
-    /** Eliminar usuario */
+        // Actualizar rol usando Spatie Permission
+        $role = Role::findOrFail($data['role_id']);
+        $user->syncRoles([$role]);
+
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Usuario actualizado',
+            'text' => 'El usuario ha sido actualizado exitosamente.',
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado exitosamente.');
+}
+
+    /**
+     * Elimina un usuario (temporalmente vacío).
+     */
     public function destroy(User $user)
     {
+        //Eliminar roles asocioados a un usuario
+        $user->roles()->detach();
+
+        //Eliminar usuario
         $user->delete();
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'Usuario eliminado correctamente.');
+        session()->flash('swal', [
+            'icon' => 'success',
+            'title' => 'Usuario eliminado',
+            'text' => 'El usuario ha sido eliminado exitosamente.',
+            ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Usuario eliminado exitosamente.');
     }
+
 }

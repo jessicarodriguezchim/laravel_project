@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'Jessica Rodriguez',
             'email' => 'jessica.rodriguez@tecdesoftware.com',
-            'password' => bcrypt('12345678'),
+            'password' => '12345678', // Laravel hasheará automáticamente gracias al cast 'hashed'
             'id_number' => '123456789',
             'phone' => '5555555555',
             'address' => 'Calle 123, Colonia 456',
