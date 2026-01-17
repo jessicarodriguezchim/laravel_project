@@ -116,10 +116,43 @@ class UserController extends Controller
     }
 
     /**
-     * Elimina un usuario (temporalmente vacío).
+     * Elimina un usuario de forma segura.
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        // Aquí se agregará la lógica para eliminar un usuario
+        // Prevenir que el admin se elimine a sí mismo
+        if ($user->id === auth()->id()) {
+            session()->flash('swal', [
+                'icon' => 'error',
+                'title' => 'Error',
+                'text' => 'No puedes eliminar tu propia cuenta.',
+            ]);
+
+            return redirect()->route('admin.users.index')->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
+        try {
+            // Eliminar roles asociados al usuario usando Spatie Permission
+            $user->roles()->detach();
+
+            // Eliminar usuario (hard delete)
+            $user->delete();
+
+            session()->flash('swal', [
+                'icon' => 'success',
+                'title' => 'Usuario eliminado',
+                'text' => 'El usuario ha sido eliminado exitosamente.',
+            ]);
+
+            return redirect()->route('admin.users.index')->with('success', 'Usuario eliminado exitosamente.');
+        } catch (\Exception $e) {
+            session()->flash('swal', [
+                'icon' => 'error',
+                'title' => 'Error',
+                'text' => 'No se pudo eliminar el usuario. Por favor, intenta nuevamente.',
+            ]);
+
+            return redirect()->route('admin.users.index')->with('error', 'No se pudo eliminar el usuario.');
+        }
     }
 }
