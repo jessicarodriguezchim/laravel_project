@@ -9,6 +9,4 @@
         </x-wire-button>
     </x-slot>
     @livewire('admin.datatables.user-table')
-    </div>
-    
 </x-admin-layout>

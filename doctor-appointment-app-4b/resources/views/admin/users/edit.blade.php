@@ -1,110 +1,106 @@
-<x-admin-layout title="Usuarios | MediConnect"
-    :breadcrumbs="[
-        ['name' => 'Dashboard',
-        'href' => route('admin.dashboard')
-        ],
-        ['name' => 'Usuarios',
-        'href' => route('admin.users.index')
-        ],
-        ['name' => 'Editar'
-        ]
-    ]">
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <form action="{{ route('admin.users.update', $user) }}" method="POST">
-            @csrf
-            @method('PUT')
+<x-admin-layout title="Usuarios | Editar" 
+:breadcrumbs="[
+    ['name' => 'Dashboard', 'href' => route('admin.dashboard')],
+    ['name' => 'Usuarios', 'href' => route('admin.users.index')],
+    ['name' => 'Editar']
+]">
 
-            <div class="mb-4">
-                <x-label for="name" value="Nombre" />
-                <x-input 
-                    id="name" 
-                    name="name" 
-                    type="text" 
-                    class="mt-1 block w-full" 
-                    placeholder="Nombre del usuario"
-                    value="{{ old('name', $user->name) }}" 
-                    required 
-                    autofocus
-                />
-                @error('name')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+<x-wire-card>
+  <form action="{{ route('admin.users.update', $user) }}" method="POST">
+    @csrf
+    @method('PUT')
+    <div class="space-y-4">
 
-            <div class="mb-4">
-                <x-label for="email" value="Correo" />
-                <x-input 
-                    id="email" 
-                    name="email" 
-                    type="email" 
-                    class="mt-1 block w-full" 
-                    placeholder="correo@ejemplo.com"
-                    value="{{ old('email', $user->email) }}" 
-                    required
-                />
-                @error('email')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+      <div class="grid lg:grid-cols-2 gap-4">
+      <x-wire-input
+        name="name"
+        label="Nombre"
+        :value="old('name', $user->name)"
+        required
+        placeholder="Nombre"
+        autocomplete="name"
+      />
 
-            <div class="mb-4">
-                <x-label for="id_number" value="Número de ID" />
-                <x-input 
-                    id="id_number" 
-                    name="id_number" 
-                    type="text" 
-                    class="mt-1 block w-full" 
-                    placeholder="Número de identificación"
-                    value="{{ old('id_number', $user->id_number) }}"
-                />
-                @error('id_number')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+      <x-wire-input
+        name="email"
+        label="Email"
+        :value="old('email', $user->email)"
+        required
+        placeholder="usuario@dominio.com"
+        autocomplete="email"
+        inputmode="email"
+      />
 
-            <div class="mb-4">
-                <x-label for="phone" value="Teléfono" />
-                <x-input 
-                    id="phone" 
-                    name="phone" 
-                    type="text" 
-                    class="mt-1 block w-full" 
-                    placeholder="Número de teléfono"
-                    value="{{ old('phone', $user->phone) }}"
-                />
-                @error('phone')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+      <x-wire-input
+        name="password"
+        label="Contraseña (opcional)"
+        placeholder="Dejar vacío para mantener la actual"
+        autocomplete="new-password"
+        type="password"
+      />
 
-            <div class="mb-4">
-                <x-label for="role_id" value="Rol" />
-                <select 
-                    id="role_id" 
-                    name="role_id" 
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                    required
-                >
-                    <option value="">Seleccione un rol</option>
-                    @foreach($roles as $role)
-                        <option value="{{ $role->id }}" {{ (old('role_id', $user->roles->first()?->id) == $role->id) ? 'selected' : '' }}>
-                            {{ $role->name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('role_id')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+      <x-wire-input
+        name="password_confirmation"
+        label="Confirmar Contraseña"
+        placeholder="Repita la contraseña si la cambia"
+        autocomplete="new-password"
+        type="password"
+      />
 
-            <div class="flex justify-end mt-4 space-x-2">
-                <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    Cancelar
-                </a>
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    Actualizar
-                </button>
-            </div>
-        </form>
+      <x-wire-input
+        name="id_number"
+        label="Número de ID"
+        required :value="old('id_number', $user->id_number)"
+        placeholder="Ej. 123456"
+        autocomplete="off"
+        inputmode="numeric"
+      />
+
+      <x-wire-input
+        name="phone"
+        label="Teléfono"
+        required :value="old('phone', $user->phone)"
+        placeholder="Ej. 1234567890"
+        autocomplete="tel"
+        inputmode="tel"
+      />
+      </div>
+
+      <x-wire-input
+        name="address"
+        label="Dirección"
+        required :value="old('address', $user->address)"
+        placeholder="Ej. Calle 123, Ciudad"
+        autocomplete="street-address"
+      />
+
+      <div>
+        <x-wire-native-select name="role_id" label="Rol" required>
+          <option value="">Seleccione un rol</option>
+
+          @foreach($roles as $role)
+            <option value="{{ $role->id }}" @selected(old('role_id', $user->roles->first()?->id) == $role->id)>
+              {{ $role->name }}
+            </option>
+          @endforeach
+        </x-wire-native-select>
+
+        <p class="text-sm text-gray-500">
+          Define los permisos y accesos del usuario
+        </p>
+      </div>
+
+      <div class="flex justify-end space-x-2">
+        <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+          Cancelar
+        </a>
+        <x-wire-button type="submit" blue>
+          <i class="fa-solid fa-floppy-disk"></i> Actualizar Usuario
+        </x-wire-button>
+      </div>
+
     </div>
+  </form>
+</x-wire-card>
+
 </x-admin-layout>
