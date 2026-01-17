@@ -36,8 +36,8 @@ class UserController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'id_number' => 'required|string|min:5|max:20|regex:/^[A-Za-z0-9\-]+$/|unique:users',
-            'phone' => 'required|digits_between:7,15',
-            'address' => 'required|string|min:3|max:255',
+            'phone' => 'nullable|digits_between:7,15',
+            'address' => 'nullable|string|min:3|max:255',
             'role_id'=>'required|exists:roles,id',
         ]);
 

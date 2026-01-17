@@ -63,9 +63,8 @@
 
       <x-wire-input
         name="phone"
-        label="Teléfono"
+        label="Teléfono (opcional)"
         :value="old('phone')"
-        required
         placeholder="Ej. 1234567890"
         autocomplete="tel"
         inputmode="tel"
@@ -74,9 +73,8 @@
 
       <x-wire-input
         name="address"
-        label="Dirección"
+        label="Dirección (opcional)"
         :value="old('address')"
-        required
         placeholder="Ej. Calle 123, Ciudad"
         autocomplete="street-address"
       />
