@@ -120,6 +120,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+       
         // Prevenir que el admin se elimine a sí mismo
         if ($user->id === auth()->id()) {
             session()->flash('swal', [
@@ -127,8 +128,7 @@ class UserController extends Controller
                 'title' => 'Error',
                 'text' => 'No puedes eliminar tu propia cuenta.',
             ]);
-
-            return redirect()->route('admin.users.index')->with('error', 'No puedes eliminar tu propia cuenta.');
+            abort(403, 'No puedes eliminarte a ti mismo.');
         }
 
         try {

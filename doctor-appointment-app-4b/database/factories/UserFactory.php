@@ -36,6 +36,12 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+
+            //nuevos datos
+            'id_number' => strtoupper($this->faker->bothify('?##?##?##')),
+            'phone' => $this->faker->numerify('9999999999'), //10 dígitos
+            'address' => $this->faker->streetAddress(), //dirección aleatoria
+            'role' => $this->faker->randomElement(['user', 'admin']), //rol aleatorio
         ];
     }
 
