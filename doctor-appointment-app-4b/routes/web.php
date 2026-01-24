@@ -20,3 +20,8 @@ Route::middleware([
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
 });
 
+//TEST 1 — Usuario NO autenticado NO puede actualizar un usuario
+Route::middleware(['auth'])->group(function () {
+    Route::resource('users', UserController::class);
+});
+
