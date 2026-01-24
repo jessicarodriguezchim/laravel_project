@@ -2,6 +2,7 @@
 //es una importacion de la clase Route del framework Laravel- Route configuara las rutas de la aplicacion
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::redirect('/', '/admin');
 //Route::get('/', function () {
@@ -21,6 +22,7 @@ Route::middleware([
 });
 
 //TEST 1 — Usuario NO autenticado NO puede actualizar un usuario
+//TEST 2 — Update falla con datos inválidos
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
 });
