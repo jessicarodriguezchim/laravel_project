@@ -13,13 +13,16 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Crea un usuario de prueba
-        User::factory()->create([
+        // El modelo User tiene cast 'hashed' en password, así que se hashea automáticamente
+        $user = User::create([
             'name' => 'Jessica Rodriguez',
             'email' => 'jessica.rodriguez@tecdesoftware.com',
-            'password' => '12345678', // Laravel hasheará automáticamente gracias al cast 'hashed'
+            'password' => '12345678',
+            'email_verified_at' => now(),
             'id_number' => '123456789',
             'phone' => '5555555555',
             'address' => 'Calle 123, Colonia 456',
-        ])->assignRole('Doctor');
+        ]);
+        $user->assignRole('Doctor');
     }
 }
