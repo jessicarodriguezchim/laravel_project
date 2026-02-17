@@ -6,6 +6,7 @@
     'green' => false,
     'yellow' => false,
     'purple' => false,
+    'white' => false,
     'xs' => false,
     'sm' => false,
     'lg' => false,
@@ -14,18 +15,23 @@
 @php
     // Determine color classes
     $colorClasses = '';
+    $textColor = 'text-white';
+    
     if ($blue) {
-        $colorClasses = 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500';
+        $colorClasses = 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 border-transparent';
     } elseif ($red) {
-        $colorClasses = 'bg-red-600 hover:bg-red-700 focus:ring-red-500';
+        $colorClasses = 'bg-red-600 hover:bg-red-700 focus:ring-red-500 border-transparent';
     } elseif ($green) {
-        $colorClasses = 'bg-green-600 hover:bg-green-700 focus:ring-green-500';
+        $colorClasses = 'bg-green-600 hover:bg-green-700 focus:ring-green-500 border-transparent';
     } elseif ($yellow) {
-        $colorClasses = 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500';
+        $colorClasses = 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500 border-transparent';
     } elseif ($purple) {
-        $colorClasses = 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500';
+        $colorClasses = 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 border-transparent';
+    } elseif ($white) {
+        $colorClasses = 'bg-white hover:bg-gray-100 focus:ring-gray-300 border-gray-300';
+        $textColor = 'text-gray-700';
     } else {
-        $colorClasses = 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500';
+        $colorClasses = 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500 border-transparent';
     }
     
     // Determine size classes
@@ -40,7 +46,7 @@
         $sizeClasses = 'px-4 py-2 text-sm';
     }
     
-    $baseClasses = 'inline-flex items-center justify-center border border-transparent rounded-md font-semibold text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150';
+    $baseClasses = "inline-flex items-center justify-center border rounded-md font-semibold $textColor uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150";
     $classes = "$baseClasses $colorClasses $sizeClasses";
 @endphp
 

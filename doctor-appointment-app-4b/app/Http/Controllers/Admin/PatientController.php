@@ -35,6 +35,13 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
+        // Sanitizar el teléfono: eliminar paréntesis, guiones y espacios
+        if ($request->emergency_contact_phone) {
+            $request->merge([
+                'emergency_contact_phone' => preg_replace('/\D/', '', $request->emergency_contact_phone)
+            ]);
+        }
+
         $data = $request->validate([
             'user_id' => 'required|exists:users,id|unique:patients,user_id',
             'blood_type_id' => 'nullable|exists:blood_types,id',
@@ -44,7 +51,7 @@ class PatientController extends Controller
             'family_history' => 'nullable|string|max:255',
             'observations' => 'nullable|string|max:255',
             'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_phone' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|digits:10',
             'emergency_contact_relationship' => 'nullable|string|max:255',
         ]);
 
@@ -82,27 +89,50 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient)
     {
-        $data = $request->validate([
-            'blood_type_id' => 'nullable|exists:blood_types,id',
-            'allergies' => 'nullable|string|max:255',
-            'chronic_conditions' => 'nullable|string|max:255',
-            'surgical_history' => 'nullable|string|max:255',
-            'family_history' => 'nullable|string|max:255',
-            'observations' => 'nullable|string|max:255',
-            'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_phone' => 'nullable|string|max:255',
-            'emergency_contact_relationship' => 'nullable|string|max:255',
-        ]);
+        try {
+            // Sanitizar el teléfono: eliminar paréntesis, guiones y espacios
+            if ($request->emergency_contact_phone) {
+                $request->merge([
+                    'emergency_contact_phone' => preg_replace('/\D/', '', $request->emergency_contact_phone)
+                ]);
+            }
 
-        $patient->update($data);
+            // 1. Validación estricta
+            $data = $request->validate([
+                'blood_type_id' => 'nullable|exists:blood_types,id',
+                'allergies' => 'nullable|string|max:255',
+                'chronic_conditions' => 'nullable|string|max:255',
+                'surgical_history' => 'nullable|string|max:255',
+                'family_history' => 'nullable|string|max:255',
+                'observations' => 'nullable|string|max:255',
+                'emergency_contact_name' => 'nullable|string|max:255',
+                'emergency_contact_phone' => 'nullable|string|digits:10',
+                'emergency_contact_relationship' => 'nullable|string|max:255',
+            ]);
 
-        session()->flash('swal', [
-            'icon' => 'success',
-            'title' => 'Paciente actualizado',
-            'text' => 'El paciente ha sido actualizado exitosamente.',
-        ]);
+            // 2. Intento de actualización
+            $patient->update($data);
 
-        return redirect()->route('admin.patients.index');
+            // 3. Respuesta de éxito
+            session()->flash('swal', [
+                'icon' => 'success',
+                'title' => 'Paciente actualizado',
+                'text' => 'El paciente ha sido actualizado exitosamente.',
+            ]);
+
+            return redirect()->route('admin.patients.index');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Si falla la validación, Laravel vuelve atrás automáticamente
+            throw $e;
+
+        } catch (\Exception $e) {
+            // Si hay un error de base de datos o de sistema
+            return back()
+                ->withInput()
+                ->with('flash.banner', 'Error inesperado: No se pudo guardar la información.')
+                ->with('flash.bannerStyle', 'danger');
+        }
     }
 
     /**
