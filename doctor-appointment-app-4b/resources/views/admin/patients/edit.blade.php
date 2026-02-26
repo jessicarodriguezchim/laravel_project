@@ -1,130 +1,202 @@
-{{-- 1. Lógica de PHP: Mantenemos la de tu compañero pero aseguramos los campos de la Parte 10 --}}
-@php
-$errorGrupos = [
-    'datos-personales' => ['document_number', 'birth_date', 'gender', 'city', 'state'],
-    'antecedentes' => ['allergies', 'chronic_conditions', 'surgical_history', 'family_history'],
-    'informacion-general' => ['blood_type_id', 'observations'],
-    'contacto-emergencia' => [
-        'emergency_contact_name', 
-        'emergency_contact_phone', 
-        'emergency_contact_relationship'
-    ],
-];
+<x-admin-layout
+    title="Editar Paciente | MediContact"
+    :breadcrumbs="[
+        ['name' => 'Dashboard', 'href' => route('admin.dashboard')],
+        ['name' => 'Pacientes', 'href' => route('admin.patients.index')],
+        ['name' => 'Editar'],
+    ]"
+>
+    {{-- Vista principal para editar el expediente del paciente en una sola pantalla. --}}
+    {{-- Header Card --}}
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8 mb-8">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-5">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fa-solid fa-user-injured text-3xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-2xl font-bold text-gray-900">{{ $patient->user->name }}</h2>
+                    <p class="text-sm text-gray-500 mt-1">{{ $patient->user->email }}</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('admin.patients.index') }}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Volver
+                </a>
+                <button type="submit" form="edit-patient-form"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300">
+                    <i class="fa-solid fa-check"></i>
+                    Guardar cambios
+                </button>
+            </div>
+        </div>
+    </div>
 
-$initialTab = 'datos-personales';
-foreach ($errorGrupos as $tabName => $fields) {
-    if($errors->hasAny($fields)) {
-        $initialTab = $tabName;
-        break;
-    }
-}
-@endphp
-
-<x-admin-layout title="Editar Paciente | {{ $patient->user->name }}">
-    
-    {{-- Formulario con Método PUT (Parte 11) --}}
-    <form action="{{ route('admin.patients.update', $patient) }}" method="POST" x-data="{ submitting: false }" x-on:submit="submitting = true">
+    {{-- Formulario principal --}}
+    <form id="edit-patient-form" action="{{ route('admin.patients.update', $patient) }}" method="POST">
         @csrf
         @method('PUT')
 
-        {{-- Cabecera de Acciones --}}
-        <x-wire-card class="mt-10">
-            <div class="lg:flex lg:justify-between lg:items-center">
-                <div class="flex items-center gap-4">
-                    <img src="{{ $patient->user->profile_photo_url }}" class="h-20 w-20 rounded-full object-cover">
+        @php
+            // Determina qué pestaña abrir al volver con errores de validación.
+            $initialTab = 'personal';
+
+            if ($errors->hasAny(['blood_type_id', 'allergies', 'chronic_conditions', 'surgical_history', 'family_history'])) {
+                $initialTab = 'history';
+            } elseif ($errors->hasAny(['date_of_birth', 'gender', 'id_number', 'observations'])) {
+                $initialTab = 'general';
+            } elseif ($errors->hasAny(['emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship'])) {
+                $initialTab = 'emergency';
+            }
+        @endphp
+
+        <x-tabs id="patientTabs" :initialTab="$initialTab">
+
+            {{-- Botones de navegación --}}
+            <x-slot name="links">
+                <x-tab-link tab="personal" icon="fa-id-card">
+                    Datos Personales
+                </x-tab-link>
+
+                <x-tab-link
+                    tab="history"
+                    icon="fa-notes-medical"
+                    :hasError="$errors->hasAny(['blood_type_id', 'allergies', 'chronic_conditions', 'surgical_history', 'family_history'])"
+                >
+                    Antecedentes
+                </x-tab-link>
+
+                <x-tab-link
+                    tab="general"
+                    icon="fa-circle-info"
+                    :hasError="$errors->hasAny(['date_of_birth', 'gender', 'id_number', 'observations'])"
+                >
+                    Información General
+                </x-tab-link>
+
+                <x-tab-link
+                    tab="emergency"
+                    icon="fa-phone-volume"
+                    :hasError="$errors->hasAny(['emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship'])"
+                    :last="true"
+                >
+                    Contacto de Emergencia
+                </x-tab-link>
+            </x-slot>
+
+            {{-- Pestaña 1: Datos Personales (solo lectura) --}}
+            <x-tab-content tab="personal">
+                <x-wire-alert class="mb-6" color="info" title="Edición de cuenta de usuario">
+                    <strong>La información de acceso</strong> (Nombre, Email y Contraseña) debe gestionarse desde la cuenta del usuario asociada.
+                    <x-slot name="action">
+                        <x-wire-button blue sm href="{{ route('admin.users.edit', $patient->user) }}">
+                            <i class="fa-solid fa-user-pen"></i>
+                            Editar Usuario
+                        </x-wire-button>
+                    </x-slot>
+                </x-wire-alert>
+
+                <div class="grid lg:grid-cols-2 gap-x-8 gap-y-5">
                     <div>
-                        <p class="text-2xl font-semibold text-gray-900">{{ $patient->user->name }}</p>
-                        <!-- <p class="text-sm text-gray-500 italic">Paciente ID: {{ $patient->id }}</p> -->
+                        <p class="text-sm font-medium text-gray-500">Email</p>
+                        <p class="mt-1 text-base text-gray-900">{{ $patient->user->email ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Teléfono</p>
+                        <p class="mt-1 text-base text-gray-900">{{ $patient->user->phone ?? '-' }}</p>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <p class="text-sm font-medium text-gray-500">Dirección</p>
+                        <p class="mt-1 text-base text-gray-900">{{ $patient->user->address ?? '-' }}</p>
                     </div>
                 </div>
-                <div class="flex space-x-3 mt-6 lg:mt-0">
-                    <x-wire-button href="{{ route('admin.patients.index') }}" white>Volver</x-wire-button>
-                    <x-wire-button type="submit" blue x-bind:disabled="submitting">
-                        <span x-show="!submitting">
-                            <i class="fa-solid fa-floppy-disk mr-2"></i>
-                            Guardar cambios
-                        </span>
-                        <span x-show="submitting" style="display: none;">
-                            <i class="fa-solid fa-spinner fa-spin mr-2"></i>
-                            Guardando...
-                        </span>
-                    </x-wire-button>
+            </x-tab-content>
+
+            {{-- Pestaña 2: Antecedentes --}}
+            <x-tab-content tab="history" title="Información Médica">
+                <div class="grid lg:grid-cols-2 gap-4">
+                    <div class="space-y-1 lg:col-span-2 lg:w-1/2">
+                        {{-- Catálogo de tipos de sangre cargado desde la base de datos. --}}
+                        <x-wire-native-select
+                            label="Tipo de sangre"
+                            name="blood_type_id"
+                        >
+                            <option value="">Seleccione tipo de sangre</option>
+                            @foreach($bloodTypes as $bloodType)
+                                <option
+                                    value="{{ $bloodType->id }}"
+                                    @selected((string) old('blood_type_id', $patient->blood_type_id) === (string) $bloodType->id)
+                                >
+                                    {{ $bloodType->name }}
+                                </option>
+                            @endforeach
+                        </x-wire-native-select>
+                    </div>
+
+                    <x-wire-textarea label="Alergias" name="allergies"
+                        placeholder="Alergias conocidas (opcional)"
+                        :value="old('allergies', $patient->allergies)" />
+
+                    <x-wire-textarea label="Condiciones crónicas" name="chronic_conditions"
+                        placeholder="Condiciones crónicas (opcional)"
+                        :value="old('chronic_conditions', $patient->chronic_conditions)" />
+
+                    <x-wire-textarea label="Historial quirúrgico" name="surgical_history"
+                        placeholder="Cirugías previas (opcional)"
+                        :value="old('surgical_history', $patient->surgical_history)" />
+
+                    <x-wire-textarea label="Antecedentes familiares" name="family_history"
+                        placeholder="Antecedentes familiares (opcional)"
+                        :value="old('family_history', $patient->family_history)" />
                 </div>
-            </div>
-        </x-wire-card>
+            </x-tab-content>
 
-        {{-- Resumen Global de Errores - Parte 12 --}}
-        @if ($errors->any())
-            <div class="mt-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-md">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i>
-                    </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-bold text-red-800 uppercase tracking-wide">
-                            Se encontraron {{ $errors->count() }} errores de validación
-                        </h3>
-                        <div class="mt-1 text-sm text-red-700">
-                            <ul class="list-disc list-inside space-y-1">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
+            {{-- Pestaña 3: Información General --}}
+            <x-tab-content tab="general" title="Datos Generales">
+                <div class="grid lg:grid-cols-2 gap-4">
+                    {{-- Campos de perfil general del paciente (si existen en el modelo). --}}
+                    <x-wire-input label="Fecha de nacimiento" name="date_of_birth" type="date"
+                        value="{{ old('date_of_birth', optional($patient->date_of_birth)->format('Y-m-d')) }}" />
+
+                    <x-wire-native-select label="Género" name="gender">
+                        <option value="">Seleccione género</option>
+                        <option value="male" @selected(old('gender', $patient->gender) === 'male')>Masculino</option>
+                        <option value="female" @selected(old('gender', $patient->gender) === 'female')>Femenino</option>
+                        <option value="other" @selected(old('gender', $patient->gender) === 'other')>Otro</option>
+                    </x-wire-native-select>
+
+                    <x-wire-input label="Número de identificación" name="id_number"
+                        placeholder="Número de identificación"
+                        value="{{ old('id_number', $patient->user->id_number) }}" />
+
+                    <x-wire-textarea label="Observaciones" name="observations"
+                        placeholder="Observaciones adicionales (opcional)"
+                        class="lg:col-span-2"
+                        :value="old('observations', $patient->observations)" />
                 </div>
-            </div>
-        @endif
+            </x-tab-content>
 
-        {{-- Pestañas y Contenido --}}
-        <x-wire-card class="mt-6">
-            <div x-data="{ tab: '{{ $initialTab }}' }">
-                
-                {{-- Navegación de Tabs (Lógica de colores y alertas) --}}
-                <div class="border-b border-gray-200">
-                    <ul class="flex flex-wrap -mb-px text-sm font-medium">
-                        @foreach(['datos-personales' => 'User', 'antecedentes' => 'File-Lines', 'informacion-general' => 'Info', 'contacto-emergencia' => 'Heart'] as $id => $icon)
-                            @php $hasError = $errors->hasAny($errorGrupos[$id] ?? []); @endphp
-                            <li class="me-2">
-                                <a href="#" x-on:click.prevent="tab = '{{ $id }}'"
-                                   :class="{
-                                       'text-blue-600 border-blue-600': tab === '{{ $id }}' && !{{ $hasError ? 'true' : 'false' }},
-                                       'text-red-600 border-red-600 font-bold': {{ $hasError ? 'true' : 'false' }},
-                                       'border-transparent text-gray-500 hover:text-blue-400': tab !== '{{ $id }}' && !{{ $hasError ? 'true' : 'false' }}
-                                   }"
-                                   class="inline-flex items-center p-4 border-b-2 rounded-t-lg transition-all duration-200">
-                                    <i class="fa-solid fa-{{ strtolower($icon) }} me-2"></i>
-                                    {{ ucwords(str_replace('-', ' ', $id)) }}
-                                    @if($hasError)
-                                        <i class="fa-solid fa-circle-exclamation ms-2 animate-pulse"></i>
-                                    @endif
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
+            {{-- Pestaña 4: Contacto de Emergencia --}}
+            <x-tab-content tab="emergency" title="Datos del Contacto de Emergencia">
+                <div class="grid lg:grid-cols-2 gap-4">
+                    {{-- Datos de contacto en caso de emergencia médica. --}}
+                    <x-wire-input label="Contacto de emergencia" name="emergency_contact_name"
+                        placeholder="Nombre del contacto"
+                        value="{{ old('emergency_contact_name', $patient->emergency_contact_name) }}" />
+
+                    <x-wire-phone label="Teléfono de emergencia" name="emergency_contact_phone"
+                        placeholder="(999) 999-9999"
+                        value="{{ old('emergency_contact_phone', $patient->emergency_contact_phone) }}" />
+
+                    <x-wire-input label="Parentesco" name="emergency_contact_relationship"
+                        placeholder="Parentesco con el paciente"
+                        value="{{ old('emergency_contact_relationship', $patient->emergency_contact_relationship) }}" />
                 </div>
+            </x-tab-content>
 
-                {{-- Contenido de las Pestañas --}}
-                <div class="p-4 mt-4">
-                    {{-- Aquí incluyes los bloques de la Parte 8, 9 y 10 que vimos antes --}}
-                    
-                    <div x-show="tab === 'datos-personales'" x-transition>
-                        @include('admin.patients.partials.edit-tab-personales')
-                    </div>
-
-                    <div x-show="tab === 'antecedentes'" style="display:none;" x-transition>
-                        @include('admin.patients.partials.edit-tab-antecedentes')
-                    </div>
-
-                    <div x-show="tab === 'informacion-general'" style="display:none;" x-transition>
-                        @include('admin.patients.partials.edit-tab-general')
-                    </div>
-
-                    <div x-show="tab === 'contacto-emergencia'" style="display:none;" x-transition>
-                        @include('admin.patients.partials.edit-tab-emergencia')
-                    </div>
-                </div>
-            </div>
-        </x-wire-card>
+        </x-tabs>
     </form>
+
 </x-admin-layout>
