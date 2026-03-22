@@ -17,7 +17,8 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    // Fortify home es "/" (config/fortify.php), no la ruta nombrada "dashboard"
+    $response->assertRedirect('/');
 });
 
 test('users cannot authenticate with invalid password', function () {
