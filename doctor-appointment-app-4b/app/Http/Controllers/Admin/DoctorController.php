@@ -15,8 +15,7 @@ class DoctorController extends Controller
      */
     public function index()
     {
-        $doctors = Doctor::with(['user', 'speciality'])->get();
-        return view('admin.doctors.index', compact('doctors'));
+        return view('admin.doctors.index');
     }
 
     /**
@@ -24,9 +23,14 @@ class DoctorController extends Controller
      */
     public function create()
     {
-        $specialities = Speciality::all();
+        $specialities = Speciality::query()->orderBy('name')->get();
         // Usuarios que no tienen un registro de doctor aún y tienen rol Doctor
-        $users = User::whereDoesntHave('doctor')->role('Doctor')->get();
+        $users = User::query()
+            ->whereDoesntHave('doctor')
+            ->role('Doctor')
+            ->select(['id', 'name', 'email'])
+            ->orderBy('name')
+            ->get();
         return view('admin.doctors.create', compact('specialities', 'users'));
     }
 
@@ -39,7 +43,14 @@ class DoctorController extends Controller
             'user_id' => 'required|exists:users,id|unique:doctors,user_id',
             'speciality_id' => 'nullable|exists:specialities,id',
             'license_number' => 'nullable|string|max:255',
-            'biography' => 'nullable|string|max:1000',
+            'biography' => 'nullable|string|max:100',
+        ], [
+            'user_id.required' => 'Debe seleccionar un usuario.',
+            'user_id.exists' => 'El usuario seleccionado no existe.',
+            'user_id.unique' => 'Este usuario ya tiene un registro de doctor.',
+            'speciality_id.exists' => 'La especialidad seleccionada no existe.',
+            'license_number.max' => 'El número de licencia no debe exceder los 255 caracteres.',
+            'biography.max' => 'La biografía no debe exceder los 100 caracteres.',
         ]);
 
         Doctor::create($data);
@@ -67,7 +78,7 @@ class DoctorController extends Controller
      */
     public function edit(Doctor $doctor)
     {
-        $specialities = Speciality::all();
+        $specialities = Speciality::query()->orderBy('name')->get();
         return view('admin.doctors.edit', compact('doctor', 'specialities'));
     }
 
@@ -80,7 +91,11 @@ class DoctorController extends Controller
             $data = $request->validate([
                 'speciality_id' => 'nullable|exists:specialities,id',
                 'license_number' => 'nullable|string|max:255',
-                'biography' => 'nullable|string|max:1000',
+                'biography' => 'nullable|string|max:100',
+            ], [
+                'speciality_id.exists' => 'La especialidad seleccionada no existe.',
+                'license_number.max' => 'El número de licencia no debe exceder los 255 caracteres.',
+                'biography.max' => 'La biografía no debe exceder los 100 caracteres.',
             ]);
 
             $doctor->update($data);

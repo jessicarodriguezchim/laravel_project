@@ -14,7 +14,9 @@ class PatientTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return Patient::query()->with('user');
+        return Patient::query()->with([
+            'user' => fn ($q) => $q->select(['id', 'name', 'email', 'id_number', 'phone']),
+        ]);
     }
 
     public function configure(): void

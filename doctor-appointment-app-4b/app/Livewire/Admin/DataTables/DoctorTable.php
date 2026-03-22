@@ -11,7 +11,10 @@ class DoctorTable extends DataTableComponent
 {
     public function builder(): Builder
     {
-        return Doctor::query()->with(['user', 'speciality']);
+        return Doctor::query()->with([
+            'user' => fn ($q) => $q->select(['id', 'name', 'email']),
+            'speciality' => fn ($q) => $q->select(['id', 'name']),
+        ]);
     }
 
     public function configure(): void

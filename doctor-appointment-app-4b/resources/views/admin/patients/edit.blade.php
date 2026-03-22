@@ -88,15 +88,20 @@
 
             {{-- Pestaña 1: Datos Personales (solo lectura) --}}
             <x-tab-content tab="personal">
-                <x-wire-alert class="mb-6" color="info" title="Edición de cuenta de usuario">
-                    <strong>La información de acceso</strong> (Nombre, Email y Contraseña) debe gestionarse desde la cuenta del usuario asociada.
-                    <x-slot name="action">
+                <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="text-sm text-blue-900">
+                            <p class="font-semibold">Edición de cuenta de usuario</p>
+                            <p class="mt-1">
+                                <strong>La información de acceso</strong> (Nombre, Email y Contraseña) debe gestionarse desde la cuenta del usuario asociada.
+                            </p>
+                        </div>
                         <x-wire-button blue sm href="{{ route('admin.users.edit', $patient->user) }}">
                             <i class="fa-solid fa-user-pen"></i>
                             Editar Usuario
                         </x-wire-button>
-                    </x-slot>
-                </x-wire-alert>
+                    </div>
+                </div>
 
                 <div class="grid lg:grid-cols-2 gap-x-8 gap-y-5">
                     <div>

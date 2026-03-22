@@ -55,9 +55,14 @@ class UserController extends Controller
 
         // Si el usuario creado tiene rol Paciente, crear registro de paciente
         if ($user->hasRole('Paciente')) {
-            // Creamos el registro para un paciente
             $patient = $user->patient()->create([]);
             return redirect()->route('admin.patients.edit', $patient);
+        }
+
+        // Si el usuario creado tiene rol Doctor, crear registro de doctor
+        if ($user->hasRole('Doctor')) {
+            $doctor = $user->doctor()->create([]);
+            return redirect()->route('admin.doctors.edit', $doctor);
         }
 
         return redirect()->route('admin.users.index')->with('success', 'Usuario creado exitosamente.');
@@ -70,7 +75,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $roles= Role::all();
+        $roles = Role::all();
         return view('admin.users.edit', compact('user', 'roles'));
     }
 

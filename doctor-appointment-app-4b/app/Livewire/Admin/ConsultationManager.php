@@ -104,14 +104,20 @@ class ConsultationManager extends Component
 
     public function openHistoryModal()
     {
-        // Cargar historial de consultas del paciente
-        $this->patientHistory = Consultation::whereHas('appointment', function ($query) {
-            $query->where('patient_id', $this->appointment->patient_id)
-                  ->where('id', '!=', $this->appointment->id);
-        })
-        ->with(['appointment.doctor.user'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+        $this->patientHistory = Consultation::query()
+            ->select(['id', 'appointment_id', 'diagnosis', 'treatment', 'created_at'])
+            ->whereHas('appointment', function ($query) {
+                $query->where('patient_id', $this->appointment->patient_id)
+                    ->where('id', '!=', $this->appointment->id);
+            })
+            ->with([
+                'appointment' => fn ($q) => $q->select(['id', 'doctor_id', 'date']),
+                'appointment.doctor' => fn ($q) => $q->select(['id', 'user_id']),
+                'appointment.doctor.user' => fn ($q) => $q->select(['id', 'name']),
+            ])
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get();
 
         $this->showHistoryModal = true;
     }
