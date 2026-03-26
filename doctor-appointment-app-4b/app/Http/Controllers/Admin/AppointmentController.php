@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AppointmentReceiptMail;
+use App\Mail\DoctorAppointmentNotificationMail;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -15,8 +21,7 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $appointments = Appointment::with(['patient.user', 'doctor.user'])->get();
-        return view('admin.appointments.index', compact('appointments'));
+        return view('admin.appointments.index');
     }
 
     /**
@@ -24,8 +29,20 @@ class AppointmentController extends Controller
      */
     public function create()
     {
-        $patients = Patient::with('user')->get();
-        $doctors = Doctor::with('user')->get();
+        $patients = Patient::query()
+            ->with(['user' => fn ($q) => $q->select('id', 'name')])
+            ->orderBy(
+                User::query()->select('name')->whereColumn('id', 'patients.user_id')
+            )
+            ->get();
+
+        $doctors = Doctor::query()
+            ->with(['user' => fn ($q) => $q->select('id', 'name')])
+            ->orderBy(
+                User::query()->select('name')->whereColumn('id', 'doctors.user_id')
+            )
+            ->get();
+
         return view('admin.appointments.create', compact('patients', 'doctors'));
     }
 
@@ -76,12 +93,70 @@ class AppointmentController extends Controller
             $data['status'] = Appointment::STATUS_PENDING;
         }
 
-        Appointment::create($data);
+        $appointment = Appointment::create($data);
+
+        $appointment->loadMissing(['patient.user', 'doctor.user']);
+
+        $receiptWasSent = false;
+        $doctorNotificationWasSent = false;
+        $patientEmail = $appointment->patient?->user?->email;
+        $doctorEmail = $appointment->doctor?->user?->email;
+
+        if (! empty($patientEmail)) {
+            try {
+                $pdf = Pdf::loadView('pdf.appointment-receipt', [
+                    'appointment' => $appointment,
+                ]);
+
+                $this->sendUsingConfiguredMailers(
+                    $patientEmail,
+                    new AppointmentReceiptMail($appointment, $pdf->output())
+                );
+
+                $receiptWasSent = true;
+            } catch (\Throwable $exception) {
+                Log::error('No se pudo enviar el comprobante PDF de la cita.', [
+                    'appointment_id' => $appointment->id,
+                    'patient_email' => $patientEmail,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        } else {
+            Log::warning('No se pudo enviar comprobante: paciente sin correo.', [
+                'appointment_id' => $appointment->id,
+            ]);
+        }
+
+        if (! empty($doctorEmail)) {
+            try {
+                $this->sendUsingConfiguredMailers(
+                    $doctorEmail,
+                    new DoctorAppointmentNotificationMail($appointment)
+                );
+
+                $doctorNotificationWasSent = true;
+            } catch (\Throwable $exception) {
+                Log::error('No se pudo enviar la notificacion de nueva cita al doctor.', [
+                    'appointment_id' => $appointment->id,
+                    'doctor_email' => $doctorEmail,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        } else {
+            Log::warning('No se pudo notificar al doctor: correo no disponible.', [
+                'appointment_id' => $appointment->id,
+            ]);
+        }
 
         session()->flash('swal', [
             'icon' => 'success',
             'title' => 'Cita creada',
-            'text' => 'La cita ha sido registrada exitosamente.',
+            'text' => match (true) {
+                $receiptWasSent && $doctorNotificationWasSent => 'La cita ha sido registrada y se enviaron los correos al paciente y al doctor.',
+                $receiptWasSent => 'La cita ha sido registrada y se envio el comprobante al paciente.',
+                $doctorNotificationWasSent => 'La cita ha sido registrada y se envio la notificacion al doctor.',
+                default => 'La cita ha sido registrada. No fue posible enviar los correos de notificacion.',
+            },
         ]);
 
         return redirect()->route('admin.appointments.index');
@@ -101,8 +176,20 @@ class AppointmentController extends Controller
      */
     public function edit(Appointment $appointment)
     {
-        $patients = Patient::with('user')->get();
-        $doctors = Doctor::with('user')->get();
+        $patients = Patient::query()
+            ->with(['user' => fn ($q) => $q->select('id', 'name')])
+            ->orderBy(
+                User::query()->select('name')->whereColumn('id', 'patients.user_id')
+            )
+            ->get();
+
+        $doctors = Doctor::query()
+            ->with(['user' => fn ($q) => $q->select('id', 'name')])
+            ->orderBy(
+                User::query()->select('name')->whereColumn('id', 'doctors.user_id')
+            )
+            ->get();
+
         return view('admin.appointments.edit', compact('appointment', 'patients', 'doctors'));
     }
 
@@ -203,5 +290,18 @@ class AppointmentController extends Controller
     {
         $appointment->load(['patient.user', 'doctor.user', 'consultation']);
         return view('admin.appointments.consultation', compact('appointment'));
+    }
+
+    private function sendUsingConfiguredMailers(string $recipient, \Illuminate\Mail\Mailable $mailable): void
+    {
+        $mailers = [config('mail.default', 'smtp')];
+
+        if (config('mail.send_copy_to_sandbox')) {
+            $mailers[] = 'mailtrap_sandbox';
+        }
+
+        foreach ($mailers as $mailer) {
+            Mail::mailer($mailer)->to($recipient)->send(clone $mailable);
+        }
     }
 }

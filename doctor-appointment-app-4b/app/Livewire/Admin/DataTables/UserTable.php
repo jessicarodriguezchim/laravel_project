@@ -16,7 +16,11 @@ class UserTable extends DataTableComponent
     //Dfine el modelo y su consulta
     public function builder():Builder
     {
-        return User::query()->with('roles');
+        return User::query()->with([
+            'roles',
+            'doctor' => fn ($q) => $q->select(['id', 'user_id']),
+            'patient' => fn ($q) => $q->select(['id', 'user_id']),
+        ]);
     }
 
     public function configure(): void

@@ -15,8 +15,7 @@ class PatientController extends Controller
      */
     public function index()
     {
-        $patients = Patient::with(['user', 'bloodType'])->get();
-        return view('admin.patients.index', compact('patients'));
+        return view('admin.patients.index');
     }
 
     /**
@@ -26,7 +25,12 @@ class PatientController extends Controller
     {
         $bloodTypes = BloodType::all();
         // Usuarios que no tienen un registro de paciente aún
-        $users = User::whereDoesntHave('patient')->role('Paciente')->get();
+        $users = User::query()
+            ->whereDoesntHave('patient')
+            ->role('Paciente')
+            ->select(['id', 'name', 'email'])
+            ->orderBy('name')
+            ->get();
         return view('admin.patients.create', compact('bloodTypes', 'users'));
     }
 

@@ -1,5 +1,17 @@
 <x-admin-layout title="Editar Doctor | {{ $doctor->user->name }}">
     
+    {{-- Estilo para placeholder gris --}}
+    <style>
+        textarea::placeholder {
+            color: #9ca3af !important;
+            opacity: 1 !important;
+        }
+        input::placeholder {
+            color: #9ca3af !important;
+            opacity: 1 !important;
+        }
+    </style>
+
     {{-- Formulario con Método PUT --}}
     <form action="{{ route('admin.doctors.update', $doctor) }}" method="POST" x-data="{ submitting: false }" x-on:submit="submitting = true">
         @csrf

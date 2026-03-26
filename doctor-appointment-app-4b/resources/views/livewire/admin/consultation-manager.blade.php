@@ -312,6 +312,7 @@
                             </button>
                         </div>
 
+                        <p class="text-xs text-gray-500 mb-3">Se muestran hasta las 50 consultas más recientes.</p>
                         <div class="max-h-96 overflow-y-auto">
                             @if(count($patientHistory) > 0)
                                 <div class="space-y-4">

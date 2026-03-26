@@ -5,6 +5,18 @@
     ['name' => 'Nuevo']
 ]">
 
+{{-- Estilo para placeholder gris --}}
+<style>
+    textarea::placeholder {
+        color: #9ca3af !important;
+        opacity: 1 !important;
+    }
+    input::placeholder {
+        color: #9ca3af !important;
+        opacity: 1 !important;
+    }
+</style>
+
 <x-wire-card>
     <h2 class="text-lg font-semibold mb-4">Registrar nuevo doctor</h2>
 
