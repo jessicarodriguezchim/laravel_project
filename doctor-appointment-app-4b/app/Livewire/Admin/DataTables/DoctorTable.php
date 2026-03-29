@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Admin\Datatables;
 
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Livewire\Admin\DataTables\BaseDataTable;
 use App\Models\Doctor;
 use Illuminate\Database\Eloquent\Builder;
+use Rappasoft\LaravelLivewireTables\Views\Column;
 
-class DoctorTable extends DataTableComponent
+class DoctorTable extends BaseDataTable
 {
     public function builder(): Builder
     {
@@ -20,26 +20,27 @@ class DoctorTable extends DataTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id');
+        $this->setDefaultSort('id', 'desc');
     }
 
     public function columns(): array
     {
         return [
-            Column::make("Id", "id")
+            Column::make('Id', 'id')
                 ->sortable(),
-            
-            Column::make("Nombre", "user.name")
+
+            Column::make('Nombre', 'user.name')
                 ->sortable()
                 ->searchable(),
-            
-            Column::make("Email", "user.email")
+
+            Column::make('Email', 'user.email')
                 ->sortable()
                 ->searchable(),
-            
-            Column::make("Especialidad", "speciality.name")
+
+            Column::make('Especialidad', 'speciality.name')
                 ->sortable(),
-            
-            Column::make("Licencia", "license_number")
+
+            Column::make('Licencia', 'license_number')
                 ->sortable(),
 
             Column::make('Acciones')
@@ -49,4 +50,3 @@ class DoctorTable extends DataTableComponent
         ];
     }
 }
-

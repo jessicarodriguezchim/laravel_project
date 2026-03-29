@@ -199,5 +199,11 @@
     "You may delete any of your existing tokens if they are no longer needed.": "Puede eliminar cualquiera de sus tokens existentes si ya no los necesita.",
     "You may not delete your personal team.": "No se puede borrar su equipo personal.",
     "You may not leave a team that you created.": "No se puede abandonar un equipo que usted creó.",
-    "Your email address is unverified.": "Su dirección de correo electrónico no está verificada."
+    "Your email address is unverified.": "Su dirección de correo electrónico no está verificada.",
+    "The spreadsheet contains an invalid email address: :email.": "La hoja contiene un correo electrónico no válido: :email.",
+    "The same email appears more than once in the file: :email.": "El mismo correo aparece más de una vez en el archivo: :email.",
+    "The same ID or document number appears more than once in the file: :doc.": "El mismo número de identificación o documento aparece más de una vez en el archivo: :doc.",
+    "These emails are already registered: :emails.": "Estos correos ya están registrados: :emails.",
+    "These ID or document numbers are already registered: :ids.": "Estos números de identificación o documento ya están registrados: :ids.",
+    "(:count more)": "(y :count más)"
 }

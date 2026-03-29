@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Admin\Datatables;
 
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Livewire\Admin\DataTables\BaseDataTable;
 use App\Models\Appointment;
 use Illuminate\Database\Eloquent\Builder;
+use Rappasoft\LaravelLivewireTables\Views\Column;
 
-class AppointmentTable extends DataTableComponent
+class AppointmentTable extends BaseDataTable
 {
     public function builder(): Builder
     {
@@ -22,35 +22,36 @@ class AppointmentTable extends DataTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id');
+        $this->setDefaultSort('id', 'desc');
     }
 
     public function columns(): array
     {
         return [
-            Column::make("Id", "id")
+            Column::make('Id', 'id')
                 ->sortable(),
 
-            Column::make("Paciente", "patient.user.name")
+            Column::make('Paciente', 'patient.user.name')
                 ->sortable()
                 ->searchable(),
 
-            Column::make("Doctor", "doctor.user.name")
+            Column::make('Doctor', 'doctor.user.name')
                 ->sortable()
                 ->searchable(),
 
-            Column::make("Fecha", "date")
+            Column::make('Fecha', 'date')
                 ->sortable()
                 ->format(function ($value) {
                     return $value->format('d/m/Y');
                 }),
 
-            Column::make("Hora inicio", "start_time")
+            Column::make('Hora inicio', 'start_time')
                 ->sortable()
                 ->format(function ($value) {
                     return date('H:i', strtotime($value));
                 }),
 
-            Column::make("Estado", "status")
+            Column::make('Estado', 'status')
                 ->sortable()
                 ->format(function ($value, $row) {
                     $colors = [
@@ -68,7 +69,7 @@ class AppointmentTable extends DataTableComponent
                     $color = $colors[$value] ?? 'gray';
                     $name = $names[$value] ?? 'Desconocido';
 
-                    return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-' . $color . '-100 text-' . $color . '-800">' . $name . '</span>';
+                    return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-'.$color.'-100 text-'.$color.'-800">'.$name.'</span>';
                 })
                 ->html(),
 

@@ -2,50 +2,49 @@
 
 namespace App\Livewire\Admin\Datatables;
 
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Livewire\Admin\DataTables\BaseDataTable;
 use App\Models\Patient;
 use Illuminate\Database\Eloquent\Builder;
+use Rappasoft\LaravelLivewireTables\Views\Column;
 
-
-class PatientTable extends DataTableComponent
+class PatientTable extends BaseDataTable
 {
-    //protected $model = Patient::class;
+    // protected $model = Patient::class;
 
     public function builder(): Builder
     {
-        return Patient::query()->with([
-            'user' => fn ($q) => $q->select(['id', 'name', 'email', 'id_number', 'phone']),
-        ]);
+        return Patient::query()->with(['user']);
     }
 
     public function configure(): void
     {
         $this->setPrimaryKey('id');
+        $this->setDefaultSort('id', 'desc');
     }
 
     public function columns(): array
     {
         return [
-            Column::make("Id", "id")
-            ->sortable(),
-            
-            Column::make("Nombre", "user.name")
-            ->sortable(),
-            
-            Column::make("Email", "user.email")
-            ->sortable(),
-            
-            Column::make("Número de id", "user.id_number")
-            ->sortable(),
-            
-            Column::make("Teléfono", "user.phone")
-            ->sortable(),
+            Column::make('Id', 'id')
+                ->sortable(),
+
+            Column::make('Nombre', 'user.name')
+                ->sortable(),
+
+            Column::make('Email', 'user.email')
+                ->sortable(),
+
+            Column::make('Número de id', 'user.id_number')
+                ->sortable(),
+
+            Column::make('Teléfono', 'user.phone')
+                ->sortable(),
 
             Column::make('Acciones')
                 ->label(function ($row) {
-                    return view('admin.patients.actions', 
-                    ['patient' => $row]);}),
-            ];
+                    return view('admin.patients.actions',
+                        ['patient' => $row]);
+                }),
+        ];
     }
 }

@@ -17,7 +17,9 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Styles -->
-        @livewireStyles
+        @unless ($light ?? false)
+            @livewireStyles
+        @endunless
 
         <!-- Scripts principales -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -55,9 +57,11 @@
         {{-- 🔹 Scripts adicionales --}}
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 
-        {{-- Orden correcto: primero WireUI, luego Livewire --}}
-        @wireUiScripts
-        @livewireScripts
+        @unless ($light ?? false)
+            {{-- Orden correcto: primero WireUI, luego Livewire --}}
+            @wireUiScripts
+            @livewireScripts
+        @endunless
 
         {{--Mostrar Sweet Alert--}}
         @if (session('swal'))
@@ -70,14 +74,17 @@
         forms.forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                const bulkPatients = form.classList.contains('delete-all-patients-form');
                 Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esto!",
+                    title: bulkPatients ? '¿Eliminar todos los pacientes?' : '¿Estás seguro?',
+                    text: bulkPatients
+                        ? 'Se borrarán todos los pacientes y las citas vinculadas. Los usuarios del sistema no se eliminan.'
+                        : '¡No podrás revertir esto!',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
+                    confirmButtonText: bulkPatients ? 'Sí, eliminar todos' : 'Sí, eliminar',
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {

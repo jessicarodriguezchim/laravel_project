@@ -20,7 +20,7 @@ Artisan::command('inspire', function () {
 | (schedule-loop.bat / cron). Ver SCHEDULER.md.
 */
 Schedule::command('appointments:send-daily-report')
-    ->everyThreeMinutes()
+    ->dailyAt('08:00')
     ->timezone(config('app.timezone'));
 
 // Cada 3 minutos (solo minutos :00, :03, :06, :09...): descomenta esto y comenta everyMinute arriba
