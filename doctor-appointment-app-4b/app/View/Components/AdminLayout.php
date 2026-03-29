@@ -14,7 +14,9 @@ class AdminLayout extends Component
     public function __construct(
         public $breadcrumbs = [],
         public $title = null,
-        public $actions = null
+        public $actions = null,
+        /** Skip Livewire + WireUI scripts (faster pages e.g. import form). */
+        public bool $light = false,
     ) {
         //
     }

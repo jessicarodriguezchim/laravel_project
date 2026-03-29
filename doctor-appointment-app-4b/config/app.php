@@ -123,4 +123,11 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Bulk import default password (migrated users)
+    |--------------------------------------------------------------------------
+    */
+    'import_default_password' => env('IMPORT_DEFAULT_PASSWORD', 'Importado123!'),
+
 ];

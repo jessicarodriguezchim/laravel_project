@@ -37,7 +37,24 @@ return [
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
+            'busy_timeout' => (int) env('DB_SQLITE_BUSY_TIMEOUT', 10000),
+            'journal_mode' => null,
+            'synchronous' => null,
+            'transaction_mode' => 'DEFERRED',
+        ],
+
+        /*
+         * Dedicated SQLite file for queue tables (jobs, failed_jobs, job_batches).
+         * Using the same sqlite file as the app for QUEUE_CONNECTION=database causes
+         * "database is locked" when the worker and the web app write concurrently.
+         */
+        'sqlite_queue' => [
+            'driver' => 'sqlite',
+            'url' => env('DB_QUEUE_URL'),
+            'database' => env('DB_QUEUE_DATABASE', database_path('queue.sqlite')),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+            'busy_timeout' => (int) env('DB_QUEUE_BUSY_TIMEOUT', 5000),
             'journal_mode' => null,
             'synchronous' => null,
             'transaction_mode' => 'DEFERRED',

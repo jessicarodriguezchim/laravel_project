@@ -5,6 +5,13 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+// Primera petición puede superar 30s (autoload, Windows/antivirus).
+$__max = (int) ini_get('max_execution_time');
+if (PHP_SAPI !== 'cli' && $__max > 0 && $__max < 120) {
+    @ini_set('max_execution_time', '120');
+}
+unset($__max);
+
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
